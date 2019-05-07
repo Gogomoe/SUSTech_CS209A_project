@@ -1,12 +1,9 @@
 <template>
     <div id="g-body">
 
-        <div id="g-top-container">
-            <component v-bind:is="topBar"></component>
-        </div>
-        <div id="g-main-container" class="g-page-container">
+        <div id="g-main-container">
             <component
-                    v-bind:is="currentPage" v-on:toggle-page="togglePage($event.page)"
+                    v-bind:is="currentPage" v-on:enter-categorty="enterCategory($event.keyword)"
             ></component>
         </div>
 
@@ -27,11 +24,10 @@
         computed: {},
         components: {
             'mainPage': MainPage,
-            'topJumbotron': null,
         },
         methods: {
-            togglePage: function (page) {
-                this.currentPage = page;
+            enterCategory: function (keyword) {
+
             }
         }
     }

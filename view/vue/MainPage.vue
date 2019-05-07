@@ -1,54 +1,96 @@
 <template>
-    <main id="m-main-page">
-        <div class="m-keyword-area">
-
-            <div class="m-keyword" v-for="k of keywords" v-bind:class="{ 'v-fade-in': k.fadeIn,'v-hide': k.hide }">
-                <div class="u-keyword">{{k.keyword}}</div>
-                <div class="u-detail">{{k.detail}}</div>
+    <main id="m-main-page" v-bind:class="{ 'v-delete': deleteMod }">
+        <div class="m-header">
+            <div class="u-delete" v-on:click="deleteMod = !deleteMod">
+                <antd-icon type="delete-o" class="icon"/>
             </div>
+        </div>
+        <div class="m-keyword-area g-page-container">
+            <keyword-box
+                    v-for="k of keywords"
+                    v-bind:key="k.keyword"
+                    v-bind:data-obj="k"
+                    v-bind:delete-mod="deleteMod"
+                    v-on:delete-keyword="deleteKeyword($event.keyword)"
+                    v-on:enter-category="enterCategory($event.keyword)"
+            >
+            </keyword-box>
 
         </div>
     </main>
 </template>
 
 <script>
+    import KeywordBox from './KeywordBox.vue';
+
     export default {
         name: "MainPage",
+        components: {KeywordBox},
         data() {
             return {
+                useless: 0,
+                deleteMod: false,
                 keywords: [],
             }
         },
         mounted() {
             this.loadKeywords()
         },
+        comments: {
+            'keyword-box': KeywordBox
+        },
         methods: {
             getKeywords: function () {
                 return [
-                    {keyword: "TEXT", detail: "25 条商品信息"},
-                    {keyword: "TEXT QWQ", detail: "25 条商品信息"},
-                    {keyword: "TEXT QWQ", detail: "25 条商品信息"},
-                    {keyword: "TEXT QWQ", detail: "25 条商品信息"},
-                    {keyword: "TEXT QWQ", detail: "25 条商品信息"},
-                    {keyword: "TEXT QWQ", detail: "25 条商品信息"},
-                    {keyword: "TEXT QWQ", detail: "25 条商品信息"}
+                    {keyword: "手机", detail: "25 条商品信息"},
+                    {keyword: "电脑", detail: "25 条商品信息"},
+                    {keyword: "TEXT1", detail: "25 条商品信息"},
+                    {keyword: "TEXT2", detail: "25 条商品信息"},
+                    {keyword: "TEXT3", detail: "25 条商品信息"},
+                    {keyword: "TEXT4", detail: "25 条商品信息"},
+                    {keyword: "TEXT5", detail: "25 条商品信息"}
                 ]
             },
             loadKeywords: function () {
                 return new Promise((resolve, reject) => {
                     let ks = this.getKeywords();
                     ks.forEach(it => {
-                        it.hide = true
+                        it.hide = true;
+                        it.fadeOut = false;
+                        it.fadeIn = false;
                     });
                     this.keywords.push(...ks);
 
                     for (let i = 0; i < ks.length; i++) {
                         setTimeout(() => {
                             ks[i].hide = false;
-                            ks[i].fideIn = true;
+                            ks[i].fadeIn = true;
                         }, i * 100);
                     }
                     setTimeout(resolve, ks.length * 100 + 300);
+                }).then(() => {
+                    this.keywords.forEach(it => {
+                        it.fadeIn = false;
+                    });
+                });
+            },
+            deleteKeyword: function (keyword) {
+                return new Promise((resolve, reject) => {
+                    let k = this.keywords.find(it => it.keyword === keyword);
+                    k.fadeOut = true;
+                    this.useless++;
+                    setTimeout(resolve, 300);
+                }).then(() => {
+                    this.keywords = this.keywords.filter(it => it.keyword !== keyword);
+                });
+            },
+            enterCategory: function (keyword) {
+                return new Promise((resolve, reject) => {
+                    this.keywords.forEach(it => it.fadeOut = true);
+                    setTimeout(resolve, 300);
+                }).then(() => {
+                    this.keywords = [];
+                    //TODO
                 });
             }
         }
