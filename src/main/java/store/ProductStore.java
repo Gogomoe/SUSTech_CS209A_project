@@ -2,10 +2,10 @@ package store;
 
 import model.Product;
 
-public interface DataStore {
+public interface ProductStore {
 
     void save(Product product);
 
-    Product load();
+    Product load(long productId);
 
 }
