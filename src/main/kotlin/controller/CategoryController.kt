@@ -1,10 +1,17 @@
 package controller
 
-class CategoryController {
+import model.Category
+import store.CategoryStore
+import store.ProductStore
 
+class CategoryController(val store: CategoryStore, productStore: ProductStore) {
 
-    fun getCategories() {
+    private val categories: MutableList<Category> = mutableListOf()
 
+    init {
+        categories.addAll(store.loadAll(productStore))
     }
+
+    fun getCategories(): List<Category> = categories
 
 }

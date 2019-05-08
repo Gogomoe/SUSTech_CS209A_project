@@ -41,15 +41,15 @@
         },
         methods: {
             getKeywords: function () {
-                return [
-                    {keyword: "手机", detail: "25 条商品信息"},
-                    {keyword: "电脑", detail: "25 条商品信息"},
-                    {keyword: "TEXT1", detail: "25 条商品信息"},
-                    {keyword: "TEXT2", detail: "25 条商品信息"},
-                    {keyword: "TEXT3", detail: "25 条商品信息"},
-                    {keyword: "TEXT4", detail: "25 条商品信息"},
-                    {keyword: "TEXT5", detail: "25 条商品信息"}
-                ]
+                let list = Category.getCategories();
+                let array = [];
+                for (let i = 0; i < list.size(); i++) {
+                    array.push({
+                        'keyword': list.get(i).getName(),
+                        'detail': list.get(i).getProducts().size() + "条商品信息"
+                    })
+                }
+                return array;
             },
             loadKeywords: function () {
                 return new Promise((resolve, reject) => {
