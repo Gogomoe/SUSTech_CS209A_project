@@ -8,9 +8,9 @@ public class Product {
 
     private String url;
 
-    private CommentsSummary comments;
+    private CommentSummary comments;
 
-    public Product(String name, long id, String url, CommentsSummary comments) {
+    public Product(String name, long id, String url, CommentSummary comments) {
         this.name = name;
         this.id = id;
         this.url = url;
@@ -29,8 +29,12 @@ public class Product {
         return url;
     }
 
-    public CommentsSummary getComments() {
+    public CommentSummary getComments() {
         return comments;
+    }
+
+    public Product setSummary(CommentSummary summary) {
+        return new Product(name, id, url, summary);
     }
 
 }
