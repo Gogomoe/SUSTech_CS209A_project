@@ -10,27 +10,22 @@ public class Comment {
 
     private LocalDateTime time;
 
-    public long getId() {
-        return id;
+    public Comment(long id, String content, LocalDateTime time) {
+        this.id = id;
+        this.content = content;
+        this.time = time;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public long getId() {
+        return id;
     }
 
     public String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(LocalDateTime time) {
-        this.time = time;
-    }
 }

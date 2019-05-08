@@ -1,22 +1,31 @@
 package model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommentQuery {
 
-    public final List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments;
 
-    public final List<Tag> tags = new ArrayList<>();
+    private List<Tag> tags;
 
     private LocalDateTime time;
+
+    public CommentQuery(List<Comment> comments, List<Tag> tags, LocalDateTime time) {
+        this.comments = comments;
+        this.tags = tags;
+        this.time = time;
+    }
 
     public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(LocalDateTime time) {
-        this.time = time;
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
     }
 }

@@ -5,15 +5,20 @@ import java.util.List;
 
 public class CommentsSummary {
 
-    public final List<CommentQuery> querys = new ArrayList<>();
+    private List<CommentQuery> querys;
 
     private double score;
+
+    public CommentsSummary(List<CommentQuery> querys, double score) {
+        this.querys = querys;
+        this.score = score;
+    }
 
     public double getScore() {
         return score;
     }
 
-    public void setScore(double score) {
-        this.score = score;
+    public List<CommentQuery> getQuerys() {
+        return querys;
     }
 }
