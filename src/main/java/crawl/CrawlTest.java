@@ -1,27 +1,21 @@
 package crawl;
 
 import model.Category;
-import model.Product;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 public class CrawlTest {//for a complete search list
 
     public static void main(String[] args) {
 
-        //search
-        //change character into % + utf-8
-        //for every search, create a product
+        for (String c : args) {
 
-        String[] clist = args;
+            String keyword = c.trim();
+            CategoryCrawler categoryCrawler = new CategoryCrawl();
+            Category category = new Category(keyword, categoryCrawler.crawl(keyword));
 
-        for (String c : clist) {
-
-            List<Product> list=new ArrayList<>();
-            Category category=new Category(c.trim(),list);
+            System.out.println(category.getProducts().size());
 
         }
 
     }
+
 }
