@@ -1,7 +1,7 @@
 <template>
     <main id="m-main-page" v-bind:class="{ 'v-delete': deleteMod }">
         <div class="m-header">
-            <div class="u-delete" v-on:click="deleteMod = !deleteMod">
+            <div class="u-delete" v-on:click="changeDeleteMod()">
                 <antd-icon type="delete-o" class="icon"/>
             </div>
         </div>
@@ -58,6 +58,7 @@
                         it.hide = true;
                         it.fadeOut = false;
                         it.fadeIn = false;
+                        it.shake = false;
                     });
                     this.keywords.push(...ks);
 
@@ -73,6 +74,18 @@
                         it.fadeIn = false;
                     });
                 });
+            },
+            changeDeleteMod: function () {
+                this.deleteMod = !this.deleteMod;
+                for (let i = 0; i < this.keywords.length; i++) {
+                    if (this.deleteMod) {
+                        setTimeout(() => {
+                            this.keywords[i].shake = true;
+                        }, 100 / this.keywords.length * i);
+                    } else {
+                        this.keywords[i].shake = false;
+                    }
+                }
             },
             deleteKeyword: function (keyword) {
                 return new Promise((resolve, reject) => {

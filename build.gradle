@@ -40,3 +40,26 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+task webpack(type: Exec) {
+    workingDir 'view'
+    commandLine "$projectDir/view/node_modules/.bin/webpack-cli.cmd", '--color'
+}
+
+task copyView(type: Copy) {
+    dependsOn webpack
+
+    from 'view'
+    into 'src/main/resources'
+    includeEmptyDirs = false
+
+    include '*.html'
+    include 'css/*.css'
+    exclude 'node_modules/**'
+    include 'dist/*.js'
+}
+
+task processView() {
+    dependsOn copyView
+    dependsOn processResources
+}

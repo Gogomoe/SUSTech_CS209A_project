@@ -4,7 +4,7 @@
          'v-fade-in': dataObj.fadeIn,
          'v-fade-out': dataObj.fadeOut,
          'v-hide': dataObj.hide,
-         'shake shake-constant':deleteMod && !dataObj.fadeOut
+         'shake shake-constant':dataObj.shake && !dataObj.fadeOut
          }"
          v-on:click="clickKeyword()">
         <div class="u-keyword">{{dataObj.keyword}}</div>
