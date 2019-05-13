@@ -4,6 +4,7 @@ import model.*;
 import nlp.TagAnalyzer;
 import scorer.CommentScorer;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,10 +22,10 @@ public class BasicQueryer extends CommentQueryer {
     }
 
     @Override
-    protected CommentQuery query() {
+    protected CommentQuery query() throws IOException {
         List<CommentQuery> queries = product.getComments().getQueries();
         LocalDateTime time = queries.get(queries.size() - 1).getTime();
-        List<Comment> comments = crawler.crawFrom(product.getId(), time);
+        List<Comment> comments = crawler.crawlFrom(product.getId(), time);
         List<Tag> tags = analyzer.analyse(comments);
         LocalDateTime now = LocalDateTime.now();
 

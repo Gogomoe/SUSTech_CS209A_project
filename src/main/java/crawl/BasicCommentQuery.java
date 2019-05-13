@@ -5,9 +5,9 @@ import model.Product;
 
 import java.util.List;
 
-public class CommentQuery extends CommentQueryer {
+public class BasicCommentQuery extends CommentQueryer {
 
-    public CommentQuery(Product product) {
+    public BasicCommentQuery(Product product) {
         super(product);
     }
 
