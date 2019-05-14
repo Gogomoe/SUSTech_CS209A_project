@@ -1,7 +1,7 @@
 <template>
     <main id="m-main-page" v-bind:class="{ 'v-delete': deleteMod }">
         <div class="m-header">
-            <div class="u-delete" v-on:click="changeDeleteMod()">
+            <div class="u-icon u-delete" v-on:click="changeDeleteMod()">
                 <antd-icon type="delete-o" class="icon"/>
             </div>
         </div>
@@ -35,9 +35,6 @@
         },
         mounted() {
             this.loadKeywords()
-        },
-        comments: {
-            'keyword-box': KeywordBox
         },
         methods: {
             getKeywords: function () {
@@ -103,7 +100,7 @@
                     setTimeout(resolve, 300);
                 }).then(() => {
                     this.keywords = [];
-                    //TODO
+                    this.$emit('enter-categorty', {keyword: keyword})
                 });
             }
         }

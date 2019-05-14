@@ -14,4 +14,8 @@ class CategoryController(val store: CategoryStore, productStore: ProductStore) {
 
     fun getCategories(): List<Category> = categories
 
+    fun getCategory(name: String): Category? {
+        return categories.find { it.name == name }
+    }
+
 }

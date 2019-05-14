@@ -66,7 +66,7 @@ class FakeProductStore : ProductStore {
                                             LocalDateTime.of(2019, 5, 8, 20, 16, 40)
                                     )
                             ),
-                            4.0
+                            4.1
                     )
             ),
             Product("华为荣耀 8X", 3L, "//img14.360buyimg.com/n7/jfs/t1/21333/14/5246/180334/5c3ad7b6Ef7d727c0/c16e93d0bf77a31f.jpg",

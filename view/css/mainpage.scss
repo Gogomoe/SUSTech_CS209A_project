@@ -1,0 +1,127 @@
+@import "setting.scss";
+
+#m-main-page {
+  @include flex-vertical;
+
+  .m-header .u-delete:hover {
+    background-color: $primeColor;
+  }
+}
+
+#m-main-page.v-delete {
+  $red: #e53935;
+
+  .m-header {
+    background-color: $red;
+  }
+
+  .m-keyword {
+    display: block;
+  }
+
+  .u-detail {
+    background-color: $red;
+  }
+
+}
+
+#m-main-page:not(.v-delete) {
+  .m-keyword:hover {
+    margin-top: -1em;
+    border: 3px solid $primeColor;
+
+    .u-keyword {
+      border: none;
+    }
+
+    .u-detail {
+      background: $primeColor;
+    }
+  }
+}
+
+.m-keyword-area {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+
+  min-height: 70vh;
+}
+
+.m-keyword {
+
+  @include bg-white;
+
+  box-sizing: border-box;
+  width: 20vw;
+  height: 250px;
+  margin: 1vw;
+
+  & > * {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .u-keyword {
+    @include center-both;
+    @include grey-border;
+
+    border-bottom: none;
+
+    height: 80%;
+    font-size: 2.5em;
+  }
+
+  .u-detail {
+    @include center-both;
+    @include bg-dark;
+
+    height: 20%;
+    transition: background-color .3s;
+  }
+
+  transition: margin-top, border, .3s;
+
+
+  &.v-fade-in {
+    animation: fade-in .3s;
+  }
+
+  &.v-fade-out {
+    animation: fade-out .3s;
+  }
+
+  &.v-hide {
+    opacity: 0;
+    margin-top: -10em;
+  }
+
+  @keyframes fade-in {
+    0% {
+      margin-top: -10em;
+      opacity: 0;
+    }
+    80% {
+      margin-top: 1em;
+    }
+    100% {
+      margin-top: 0;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    0% {
+      margin-top: 0;
+      opacity: 1;
+    }
+    80% {
+      margin-top: -3em;
+    }
+    100% {
+      margin-top: -10em;
+      opacity: 0;
+    }
+  }
+}

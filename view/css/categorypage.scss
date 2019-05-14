@@ -1,0 +1,116 @@
+@import "setting.scss";
+
+.m-category-history {
+  box-sizing: border-box;
+  width: 100%;
+  background-color: $primeColor;
+  height: 0;
+  overflow: hidden;
+
+  transition: height .3s ease-in-out;
+
+  &.show {
+    height: 80vh;
+  }
+}
+
+#m-category-page {
+  @include flex-vertical;
+
+  .m-header {
+    background-color: $primeColor;
+
+    .u-icon:hover {
+      background-color: darken($primeColor, 10%);
+    }
+
+    .circle.u-update {
+
+      background-color: darken($primeColor, 10%);
+
+      .icon {
+        animation: circle .8s infinite;
+      }
+
+      @keyframes circle {
+        0% {
+          transform: rotate(0);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    }
+
+  }
+}
+
+
+.m-product-area {
+  @include flex-vertical;
+  align-items: center;
+
+}
+
+.m-product-box {
+  @include bg-white;
+  display: flex;
+  flex-direction: row;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 150px;
+  padding: 1em;
+
+  & > * {
+    @include center-vertical;
+    height: 100%;
+  }
+
+  & > img {
+    width: 150px;
+    object-fit: contain;
+  }
+
+  .title-box {
+    flex-grow: 1;
+
+    h1 {
+      font-size: 1.5em;
+      font-weight: normal;
+    }
+  }
+
+  .score-box {
+    @include center-both;
+    width: 112px;
+  }
+
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0);
+
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1, 1.1);
+  }
+
+  &.fade-in {
+    animation: fade-in .3s;
+  }
+
+  &.fade-out {
+    animation: fade-in .3s reverse;
+  }
+
+  @keyframes fade-in {
+    0% {
+      transform: scale(0.7, 0.7);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1, 1);
+      opacity: 1;
+    }
+  }
+
+}
