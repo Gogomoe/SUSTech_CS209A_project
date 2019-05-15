@@ -35,6 +35,8 @@ dependencies {
 
 }
 
+sourceCompatibility = '1.9'
+targetCompatibility = '1.9'
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"

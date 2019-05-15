@@ -4,6 +4,7 @@ import model.CommentQuery;
 import model.CommentSummary;
 import model.Product;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public abstract class CommentQueryer {
         this.product = product;
     }
 
-    void upate() {
+    void upate() throws IOException {
         CommentQuery query = query();
         List<CommentQuery> queries = new ArrayList<>(product.getComments().getQueries());
         queries.add(query);
@@ -23,7 +24,7 @@ public abstract class CommentQueryer {
         product = product.setSummary(summary);
     }
 
-    protected abstract CommentQuery query();
+    protected abstract CommentQuery query() throws IOException;
 
     protected abstract CommentSummary summary(List<CommentQuery> queries);
 
