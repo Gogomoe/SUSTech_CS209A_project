@@ -99,13 +99,6 @@
                 this.isShowHistory = !this.isShowHistory
             },
             enterProduct: function (id) {
-                return new Promise((resolve, reject) => {
-                    this.products.forEach(it => it.fadeOut = true);
-                    setTimeout(resolve, 290);
-                }).then(() => {
-                    this.products = [];
-                    this.$emit('enter-product', {productId: id});
-                });
             }
         }
     }
