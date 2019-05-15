@@ -17,29 +17,6 @@ public class CommentCrawl implements CommentCrawler {
 
     private final String urlTemplate = "https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv1973&productId=%s&score=0&sortType=6&page=%d&pageSize=10&isShadowSku=0&fold=1";
 
-    public static void main(String[] args) throws IOException {
-
-        /*
-        List<Comment> list1 = new CommentCrawl().crawl(100005087998L, 50);
-        System.out.println(list1);
-        */
-
-        /*
-        String strDatewithTime = "2019-05-12T10:11:30";
-        LocalDateTime aLDT = LocalDateTime.parse(strDatewithTime);
-
-        List<Comment> list2 = new CommentCrawl().crawlFrom(100005087998L, aLDT);
-        for (Comment c : list2) {
-            System.out.println(c.getTime());
-        }
-        System.out.println(list2.size());
-        */
-
-        List<Comment> list3 = new CommentCrawl().crawlAll(100005087998L);
-        System.out.println(list3.size());
-
-    }
-
     @Override
     public List<Comment> crawl(long productId, int page) throws IOException {
 
