@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class CommentQuery extends CommentQueryer {
+public class BasicCommentQueryer extends CommentQueryer {
 
     private TagAnalyzer analyzer;
     private CommentCrawler crawler;
     private CommentScorer scorer;
 
-    public CommentQuery(Product product, TagAnalyzer analyzer, CommentCrawler crawler, CommentScorer scorer) {
+    public BasicCommentQueryer(Product product, TagAnalyzer analyzer, CommentCrawler crawler, CommentScorer scorer) {
         super(product);
         this.analyzer = analyzer;
         this.crawler = crawler;

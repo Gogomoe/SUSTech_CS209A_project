@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentCrawl implements CommentCrawler {
+public class BasicCommentCrawler implements CommentCrawler {
 
     private final String urlTemplate = "https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv1973&productId=%s&score=0&sortType=6&page=%d&pageSize=10&isShadowSku=0&fold=1";
 

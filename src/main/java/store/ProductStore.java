@@ -2,12 +2,10 @@ package store;
 
 import model.Product;
 
-import java.io.IOException;
-
 public interface ProductStore {
 
-    void save(Product product) throws IOException;
+    void save(Product product);
 
-    Product load(long productId) throws IOException;
+    Product load(long productId);
 
 }
