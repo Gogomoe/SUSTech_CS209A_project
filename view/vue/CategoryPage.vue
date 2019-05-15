@@ -1,6 +1,7 @@
 <template>
     <main id="m-category-page">
-        <div class="m-category-history"
+
+        <div class="m-history m-category-history"
              v-bind:class="{'show':isShowHistory}"></div>
         <div class="m-header">
             <div class="u-icon u-rollback" v-on:click="backToMainPage()">
@@ -85,7 +86,7 @@
             backToMainPage: function () {
                 return new Promise((resolve, reject) => {
                     this.products.forEach(it => it.fadeOut = true);
-                    setTimeout(resolve, 300);
+                    setTimeout(resolve, 290);
                 }).then(() => {
                     this.products = [];
                     this.$emit('back-main-page');
@@ -93,12 +94,18 @@
             },
             showHistory: function () {
                 if (!this.isShowHistory) {
-
+                    //TODO animation
                 }
                 this.isShowHistory = !this.isShowHistory
             },
             enterProduct: function (id) {
-
+                return new Promise((resolve, reject) => {
+                    this.products.forEach(it => it.fadeOut = true);
+                    setTimeout(resolve, 290);
+                }).then(() => {
+                    this.products = [];
+                    this.$emit('enter-product', {productId: id});
+                });
             }
         }
     }

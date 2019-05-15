@@ -1,50 +1,8 @@
 @import "setting.scss";
 
-.m-category-history {
-  box-sizing: border-box;
-  width: 100%;
-  background-color: $primeColor;
-  height: 0;
-  overflow: hidden;
-
-  transition: height .3s ease-in-out;
-
-  &.show {
-    height: 80vh;
-  }
-}
-
 #m-category-page {
   @include flex-vertical;
-
-  .m-header {
-    background-color: $primeColor;
-
-    .u-icon:hover {
-      background-color: darken($primeColor, 10%);
-    }
-
-    .circle.u-update {
-
-      background-color: darken($primeColor, 10%);
-
-      .icon {
-        animation: circle .8s infinite;
-      }
-
-      @keyframes circle {
-        0% {
-          transform: rotate(0);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-    }
-
-  }
 }
-
 
 .m-product-area {
   @include flex-vertical;
