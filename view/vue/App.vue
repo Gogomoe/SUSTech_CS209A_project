@@ -24,7 +24,7 @@
         name: "App",
         data() {
             return {
-                currentPage: 'mainPage',
+                currentPage: 'mainPage', //TODO
                 dataObj: {
                     category: ''
                 }

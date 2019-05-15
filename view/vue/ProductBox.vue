@@ -1,8 +1,8 @@
 <template>
     <div class="m-product-box"
          v-bind:class="{
-         'fade-in':dataObj.fadeIn,
-         'fade-out':dataObj.fadeOut
+         'v-fade-in':dataObj.fadeIn,
+         'v-fade-out':dataObj.fadeOut
          }"
          v-on:click="$emit('enter-product', {productId: dataObj.id})">
         <img v-bind:src="dataObj.url" v-bind:alt="dataObj.name">
