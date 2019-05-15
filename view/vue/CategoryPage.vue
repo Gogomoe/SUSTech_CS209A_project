@@ -9,7 +9,7 @@
             </div>
             <div class="u-icon u-update"
                  v-bind:class="{'circle':isUpdating}"
-                 v-on:click="update()">
+                 v-on:click="updateProducts()">
                 <antd-icon type="reload-o" class="icon"/>
             </div>
             <div class="u-icon u-arrow-up" v-on:click="showHistory()">
@@ -39,6 +39,7 @@
                         v-for="p of products"
                         v-bind:key="p.id"
                         v-bind:data-obj="p"
+                        v-bind:max-score="maxScore"
                         v-on:enter-product="enterProduct($event.productId)"
                 ></product-box>
             </div>
@@ -65,7 +66,8 @@
                 isShowHistory: false,
                 isUpdating: false,
                 sidebarFadeIn: false,
-                sidebarFadeOut: false
+                sidebarFadeOut: false,
+                maxScore: 0
             }
         },
         props: ['dataObj'],
@@ -91,6 +93,8 @@
                     array.forEach(it => {
                         it.fadeIn = false;
                         it.fadeOut = false;
+
+                        this.maxScore = Math.max(this.maxScore, it.score);
                     });
 
                     for (let i = 0; i < array.length; i++) {
@@ -139,7 +143,32 @@
                 });
             },
             modifyWeight: function (name, weight) {
-                //TODO
+                Controller.updateTag(name, parseInt(weight));
+                this.products.forEach(it => {
+                    it.score = Controller.calculateScore(it.id);
+                    this.maxScore = Math.max(this.maxScore, it.score);
+                });
+                this.products.sort((a, b) => -(a.score - b.score));
+            },
+            updateProducts: function () {
+                return new Promise((resolve, reject) => {
+                    this.isUpdating = true;
+                    Controller.updateProducts(this.dataObj.category);
+                    setInterval(() => {
+                        if (!Controller.isUpdating()) {
+                            resolve();
+                        }
+                    }, 100)
+                }).then(() => {
+                    return new Promise((resolve, reject) => {
+                        this.isUpdating = false;
+                        this.products.forEach(it => it.fadeOut = true);
+                        setTimeout(resolve, 290);
+                    })
+                }).then(() => {
+                    this.products = [];
+                    this.loadProducts();
+                });
             },
             showHistory: function () {
                 if (!this.isShowHistory) {

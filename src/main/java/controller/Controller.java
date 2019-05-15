@@ -1,8 +1,10 @@
 package controller;
 
 import model.Category;
+import model.CommentSummary;
 import model.Product;
 import model.TagWeight;
+import scorer.CommentSummer;
 import store.CategoryStore;
 import store.ProductStore;
 import store.TagWeightStore;
@@ -19,6 +21,7 @@ public class Controller {
     private ProductStore productStore;
     private TagWeightStore tagWeightStore;
 
+    private CommentSummer summer;
 
     private List<Category> categories = new ArrayList<>();
     private Map<Long, Product> products = new HashMap<>();
@@ -37,6 +40,10 @@ public class Controller {
         tagWeightStore.loadAllSaves().forEach(
                 it -> tagWeights.put(it.getContent(), new TagWeight(it.getContent(), it.getWeight()))
         );
+
+        Map<String, Integer> map = new HashMap<>();
+        tagWeights.forEach((key, value) -> map.put(key, value.getWeight()));
+        summer = new CommentSummer(map);
     }
 
 
@@ -51,7 +58,7 @@ public class Controller {
 
     public List<TagWeight> getTagWeights(List<Product> products) {
         return products.stream()
-                .map(it -> it.getComments())
+                .map(Product::getComments)
                 .flatMap(it -> it.getQueries().stream())
                 .flatMap(it -> it.getTags().stream())
                 .map(it -> {
@@ -67,8 +74,33 @@ public class Controller {
     }
 
     public void updateTag(String name, int weight) {
-        tagWeights.put(name, new TagWeight(name, weight));
-        tagWeightStore.save(new ArrayList<>(tagWeights.values()));
+        try {
+            tagWeights.put(name, new TagWeight(name, weight));
+            tagWeightStore.save(new ArrayList<>(tagWeights.values()));
+            summer.updateWeight(name, weight);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public double calculateScore(long productId) {
+        Product p = products.get(productId);
+        CommentSummary summary = summer.evaluate(p.getComments().getQueries());
+        Product newProduct = p.setSummary(summary);
+        products.put(productId, newProduct);
+        productStore.save(newProduct);
+        return summary.getScore();
+    }
+
+    private boolean isUpdating = false;
+
+    public void updateProducts(String category) {
+        //TODO
+    }
+
+    public boolean isUpdating() {
+        //TODO
+        return false;
     }
 
 }

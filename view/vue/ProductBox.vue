@@ -12,7 +12,7 @@
             </h1>
         </div>
         <div class="score-box"
-             v-bind:style="{ 'font-size' :2.4 * dataObj.score/5 + 'em' }">
+             v-bind:style="{ 'font-size' :2.4 * dataObj.score / maxScore + 'em' }">
             {{dataObj.score | scoreFilter}}
         </div>
     </div>
@@ -24,7 +24,7 @@
         data() {
             return {}
         },
-        props: ['dataObj'],
+        props: ['dataObj', 'maxScore'],
         filters: {
             scoreFilter(value) {
                 return parseFloat(value).toFixed(1);

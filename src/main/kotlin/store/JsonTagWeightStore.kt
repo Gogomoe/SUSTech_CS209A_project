@@ -11,6 +11,10 @@ class JsonTagWeightStore : TagWeightStore {
     private val path = Path.of("json/tags.json")
     private val gson = Gson()
 
+    init {
+        path.parent.toFile().mkdirs()
+    }
+
     override fun save(tags: MutableList<TagWeight>?) {
         Files.writeString(path, gson.toJson(tags!!))
     }

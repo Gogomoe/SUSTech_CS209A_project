@@ -11,8 +11,8 @@ import javafx.scene.Scene
 import javafx.stage.Screen
 import javafx.stage.Stage
 import server.Server
-import store.FakeCategoryStore
-import store.FakeProductStore
+import store.JsonCategoryStore
+import store.JsonProductStore
 import store.JsonTagWeightStore
 
 
@@ -23,8 +23,8 @@ class App(val primaryStage: Stage) {
     val browser = Browser()
     val view = BrowserView(browser)
 
-    private val productStore = FakeProductStore()
-    private val categoryStore = FakeCategoryStore()
+    private val productStore = JsonProductStore()
+    private val categoryStore = JsonCategoryStore()
     private val tagWeightStore = JsonTagWeightStore()
 
     val controller = Controller(categoryStore, productStore, tagWeightStore)
@@ -59,6 +59,5 @@ class App(val primaryStage: Stage) {
 
         browser.loadURL("http://localhost:9090/index.html")
     }
-
 
 }
