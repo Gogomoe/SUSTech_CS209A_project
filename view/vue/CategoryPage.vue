@@ -71,39 +71,17 @@
         props: ['dataObj'],
         methods: {
             getProducts: function () {
-                // let category = Category.getCategory(this.dataObj.category);
-                // let list = category.getProducts();
-                // let array = [];
-                // for (let i = 0; i < list.size(); i++) {
-                //     array.push({
-                //         name: list.get(i).getName(),
-                //         id: list.get(i).getId(),
-                //         url: list.get(i).getUrl(),
-                //         score: list.get(i).getComments().getScore(),
-                //     });
-                // }
-                // return array;
-
-                let array = [
-                    {
-                        name: '红米 Redmi Note7Pro',
-                        id: 1,
-                        url: '//img13.360buyimg.com/n7/jfs/t1/22679/31/6957/165164/5c650eacE9550017b/dede93ea26974929.jpg',
-                        score: 5.0
-                    },
-                    {
-                        name: 'Apple iPhone XR',
-                        id: 2,
-                        url: '//img10.360buyimg.com/n7/jfs/t1/3405/18/3537/69901/5b997c0aE5dc8ed9f/a2c208410ae84d1f.jpg',
-                        score: 4.0
-                    },
-                    {
-                        name: '华为荣耀 8X',
-                        id: 3,
-                        url: '//img14.360buyimg.com/n7/jfs/t1/21333/14/5246/180334/5c3ad7b6Ef7d727c0/c16e93d0bf77a31f.jpg',
-                        score: 4.5
-                    }
-                ];
+                let category = Controller.getCategory(this.dataObj.category);
+                let list = category.getProducts();
+                let array = [];
+                for (let i = 0; i < list.size(); i++) {
+                    array.push({
+                        name: list.get(i).getName(),
+                        id: list.get(i).getId(),
+                        url: list.get(i).getUrl(),
+                        score: list.get(i).getComments().getScore(),
+                    });
+                }
                 return array;
             },
             loadProducts: function () {
@@ -129,11 +107,16 @@
                 });
             },
             getTags: function () {
-                return [
-                    {name: '好看', weight: 3},
-                    {name: '流畅', weight: 2},
-                    {name: '性价比高', weight: 1}
-                ]
+                let tags = Controller.getTagWeightsByCategory(this.dataObj.category);
+                console.log(tags);
+                let array = [];
+                for (let i = 0; i < tags.size(); i++) {
+                    array.push({
+                        name: tags.get(i).getContent(),
+                        weight: tags.get(i).getWeight(),
+                    });
+                }
+                return array;
             },
             loadTags: function () {
                 return new Promise((resolve, reject) => {

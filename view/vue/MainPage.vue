@@ -38,7 +38,7 @@
         },
         methods: {
             getKeywords: function () {
-                let list = Category.getCategories();
+                let list = Controller.getCategories();
                 let array = [];
                 for (let i = 0; i < list.size(); i++) {
                     array.push({
