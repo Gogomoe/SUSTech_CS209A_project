@@ -3,6 +3,7 @@ package crawl;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import model.Comment;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -10,8 +11,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BasicCommentCrawler implements CommentCrawler {
 
@@ -24,7 +25,7 @@ public class BasicCommentCrawler implements CommentCrawler {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoInput(true);
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+        connection.setRequestProperty("User-Agent", randomUserAgent());
         connection.setRequestProperty("Referer", "https://item.jd.com/");
 
         String str = new String(connection.getInputStream().readAllBytes(), Charset.forName("GBK"));
@@ -36,8 +37,7 @@ public class BasicCommentCrawler implements CommentCrawler {
 
         Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime time = LocalDateTime.parse(json.getAsString(), formatter);
-            return time;
+            return LocalDateTime.parse(json.getAsString(), formatter);
         }).create();
         JsonObject object = new JsonParser().parse(str).getAsJsonObject();
         String array = object.get("comments").getAsJsonArray().toString();
@@ -50,36 +50,62 @@ public class BasicCommentCrawler implements CommentCrawler {
 
     }
 
+
     @Override
     public List<Comment> crawlFrom(long productId, LocalDateTime startDate) throws IOException {
 
         int page = 0;
-        List<Comment> list = new ArrayList<>();
-        while (list.isEmpty() || list.get(list.size() - 1).getTime().isAfter(startDate)) {
+        Deque<Comment> list = new ArrayDeque<>();
 
-            List<Comment> comment = crawl(productId, page);
+        while (list.isEmpty() || list.getLast().getTime().isAfter(startDate)) {
+
+            List<Comment> comment = crawl(productId, page++);
             if (comment.isEmpty()) {
                 break;
             }
 
             list.addAll(comment);
-            page++;
-            while (list.get(list.size() - 1).getTime().isBefore(startDate)) {
-                list.remove(list.size() - 1);
-            }
+
         }
-        return list;
+
+        return list.stream()
+                .distinct()
+                .filter(it -> it.getTime().isAfter(startDate))
+                .collect(Collectors.toList());
 
     }
 
     @Override
     public List<Comment> crawlAll(long productId) throws IOException {
+
         List<Comment> list = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            list.addAll(crawl(productId, i));
+
+        for (int i = 0; i < 100; i++) {
+            List<Comment> page = crawl(productId, i);
+            list.addAll(page);
+
+            if (page.isEmpty()) {
+                break;
+            }
         }
 
         return list;
     }
+
+    private static final String[] userAgents = {
+            "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+            "Mozilla/5.0 (compatible; Bingbot/2.0; +http://www.bing.com/bingbot.htm)",
+            "Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)",
+            "DuckDuckBot/1.0; (+http://duckduckgo.com/duckduckbot.html)",
+            "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)",
+            "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)",
+            "ia_archiver (+http://www.alexa.com/site/help/webmasters; crawler@alexa.com)"
+    };
+    private final Random generator = new Random();
+
+    private String randomUserAgent() {
+        return userAgents[generator.nextInt(userAgents.length)];
+    }
+
 
 }
