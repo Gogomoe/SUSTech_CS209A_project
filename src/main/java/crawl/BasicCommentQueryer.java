@@ -1,9 +1,6 @@
 package crawl;
 
-import model.Comment;
-import model.CommentSummary;
-import model.Product;
-import model.Tag;
+import model.*;
 import nlp.TagAnalyzer;
 import scorer.CommentScorer;
 
@@ -25,27 +22,27 @@ public class BasicCommentQueryer extends CommentQueryer {
     }
 
     @Override
-    protected model.CommentQuery query() throws IOException {
+    protected CommentQuery query() throws IOException {
 
         if (product.getComments().getQueries().isEmpty()) {
 
             List<Comment> comments = crawler.crawlAll(product.getId());
             List<Tag> tags = analyzer.analyse(comments);
             LocalDateTime now = LocalDateTime.now();
-            return new model.CommentQuery(comments, tags, now);
+            return new CommentQuery(comments, tags, now);
         } else {
 
-            List<model.CommentQuery> queries = product.getComments().getQueries();
+            List<CommentQuery> queries = product.getComments().getQueries();
             LocalDateTime time = queries.get(queries.size() - 1).getTime();
             List<Comment> comments = crawler.crawlFrom(product.getId(), time);
             List<Tag> tags = analyzer.analyse(comments);
             LocalDateTime now = LocalDateTime.now();
-            return new model.CommentQuery(comments, tags, now);
+            return new CommentQuery(comments, tags, now);
         }
     }
 
     @Override
-    protected CommentSummary summary(List<model.CommentQuery> queries) {
+    protected CommentSummary summary(List<CommentQuery> queries) {
         return scorer.evaluate(queries);
     }
 

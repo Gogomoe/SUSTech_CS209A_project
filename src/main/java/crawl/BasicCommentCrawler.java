@@ -89,7 +89,9 @@ public class BasicCommentCrawler implements CommentCrawler {
             }
         }
 
-        return list;
+        return list.stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private static final String[] userAgents = {
