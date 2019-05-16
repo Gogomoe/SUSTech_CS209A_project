@@ -12,7 +12,7 @@
             </h1>
         </div>
         <div class="score-box"
-             v-bind:style="{ 'font-size' :2.4 * dataObj.score / maxScore + 'em' }">
+             v-bind:style="{ 'font-size' :1.6 * dataObj.score / maxScore + 0.8 + 'em' }">
             {{dataObj.score | scoreFilter}}
         </div>
     </div>

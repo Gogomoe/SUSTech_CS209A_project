@@ -1,9 +1,15 @@
 package controller;
 
+import crawl.AsyncCategoryCrawler;
+import crawl.AsyncCommentQueryer;
+import crawl.BasicCommentCrawler;
+import kotlin.jvm.functions.Function1;
 import model.Category;
 import model.CommentSummary;
 import model.Product;
 import model.TagWeight;
+import nlp.FakeTagAnalyzer;
+import nlp.TagAnalyzer;
 import scorer.CommentSummer;
 import store.CategoryStore;
 import store.ProductStore;
@@ -21,6 +27,7 @@ public class Controller {
     private ProductStore productStore;
     private TagWeightStore tagWeightStore;
 
+    private TagAnalyzer tagAnalyzer = new FakeTagAnalyzer();
     private CommentSummer summer;
 
     private List<Category> categories = new ArrayList<>();
@@ -61,6 +68,7 @@ public class Controller {
                 .map(Product::getComments)
                 .flatMap(it -> it.getQueries().stream())
                 .flatMap(it -> it.getTags().stream())
+                .distinct()
                 .map(it -> {
                     tagWeights.putIfAbsent(it.getContent(), new TagWeight(it.getContent(), 1));
                     return tagWeights.get(it.getContent());
@@ -94,13 +102,26 @@ public class Controller {
 
     private boolean isUpdating = false;
 
-    public void updateProducts(String category) {
-        //TODO
+    public void updateProducts(String categoryName) {
+        isUpdating = true;
+        Category category = categories.stream().filter(it -> it.getName().equals(categoryName)).findFirst().get();
+        Function1<Product, AsyncCommentQueryer> generator =
+                product -> new AsyncCommentQueryer(product, new BasicCommentCrawler(), tagAnalyzer, summer);
+        AsyncCategoryCrawler crawler = new AsyncCategoryCrawler(category, generator);
+        crawler.update().thenAcceptAsync(c -> {
+            c.getProducts().forEach(p -> {
+                products.put(p.getId(), p);
+                productStore.save(p);
+            });
+            categories.remove(c);
+            categories.add(c);
+            categoryStore.saveAll(categories);
+            isUpdating = false;
+        });
     }
 
     public boolean isUpdating() {
-        //TODO
-        return false;
+        return isUpdating;
     }
 
 }

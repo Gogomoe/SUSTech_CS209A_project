@@ -8,15 +8,19 @@ import java.util.stream.Collectors;
 
 public interface CategoryStore {
 
-    void save(CategorySave save);
+    void saveSaves(List<CategorySave> save);
 
     List<CategorySave> loadAllSaves();
 
-    default void save(Category category) {
-        List<Long> ids = category.getProducts().stream()
-                .map(Product::getId)
-                .collect(Collectors.toList());
-        save(new CategorySave(category.getName(), ids));
+    default void saveAll(List<Category> category) {
+        List<CategorySave> saves = category.stream().map(it -> {
+            List<Long> ids = it.getProducts().stream()
+                    .map(Product::getId)
+                    .collect(Collectors.toList());
+            return new CategorySave(it.getName(), ids);
+        }).collect(Collectors.toList());
+
+        saveSaves(saves);
     }
 
     default List<Category> loadAll(ProductStore store) {

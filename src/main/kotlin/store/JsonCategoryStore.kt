@@ -2,6 +2,7 @@ package store
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -14,9 +15,9 @@ class JsonCategoryStore : CategoryStore {
         path.parent.toFile().mkdirs()
     }
 
-    override fun save(save: CategoryStore.CategorySave) {
+    override fun saveSaves(save: MutableList<CategoryStore.CategorySave>) {
         val json = gson.toJson(save)
-        Files.writeString(path, json)
+        Files.write(path, json.toByteArray(StandardCharsets.UTF_8))
     }
 
     override fun loadAllSaves(): MutableList<CategoryStore.CategorySave> {

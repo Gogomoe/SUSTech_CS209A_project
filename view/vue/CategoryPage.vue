@@ -112,7 +112,6 @@
             },
             getTags: function () {
                 let tags = Controller.getTagWeightsByCategory(this.dataObj.category);
-                console.log(tags);
                 let array = [];
                 for (let i = 0; i < tags.size(); i++) {
                     array.push({
@@ -167,7 +166,9 @@
                     })
                 }).then(() => {
                     this.products = [];
+                    this.tags = [];
                     this.loadProducts();
+                    this.loadTags();
                 });
             },
             showHistory: function () {

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Tag {
 
     private String content;
@@ -26,4 +28,19 @@ public class Tag {
         return score;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tag tag = (Tag) o;
+
+        return Objects.equals(content, tag.content);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return content != null ? content.hashCode() : 0;
+    }
 }
