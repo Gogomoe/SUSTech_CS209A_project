@@ -1,12 +1,14 @@
 <template>
     <div id="g-body">
 
-        <div id="g-top-container">
-            <component v-bind:is="topBar"></component>
-        </div>
-        <div id="g-main-container" class="g-page-container">
+        <div id="g-main-container">
             <component
-                    v-bind:is="currentPage" v-on:toggle-page="togglePage($event.page)"
+                    v-bind:is="currentPage"
+                    v-bind:dataObj="dataObj"
+                    v-on:enter-categorty="enterCategory($event.keyword)"
+                    v-on:enter-product="enterProduct($event.productId)"
+                    v-on:back-main-page="backToMainPage()"
+                    v-on:back-category-page="backToCategoryPage()"
             ></component>
         </div>
 
@@ -15,23 +17,39 @@
 
 <script>
     import MainPage from './MainPage.vue';
+    import CategoryPage from './CategoryPage.vue';
+    import ProductPage from './ProductPage.vue';
 
     export default {
         name: "App",
         data() {
             return {
                 currentPage: 'mainPage',
-                topBar: 'topJumbotron'
+                dataObj: {
+                    category: ''
+                }
             }
         },
         computed: {},
         components: {
             'mainPage': MainPage,
-            'topJumbotron': null,
+            'categoryPage': CategoryPage,
+            'productPage': ProductPage
         },
         methods: {
-            togglePage: function (page) {
-                this.currentPage = page;
+            enterCategory: function (keyword) {
+                this.dataObj.category = keyword;
+                this.currentPage = 'categoryPage';
+            },
+            enterProduct: function (productId) {
+                this.dataObj.product = productId;
+                this.currentPage = 'productPage';
+            },
+            backToCategoryPage: function () {
+                this.currentPage = 'categoryPage';
+            },
+            backToMainPage: function () {
+                this.currentPage = 'mainPage';
             }
         }
     }
