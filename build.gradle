@@ -20,6 +20,9 @@ dependencies {
     compile 'org.slf4j:slf4j-simple:1.7.26'
     compile 'io.javalin:javalin:2.8.0'
 
+    compile group: 'com.hankcs', name: 'hanlp', version: 'portable-1.7.3'
+
+
     compile(group: 'org.openjfx', name: 'javafx-base', version: '11.0.2', classifier: 'win')
     compile(group: 'org.openjfx', name: 'javafx-graphics', version: '11.0.2', classifier: 'win')
     compile(group: 'org.openjfx', name: 'javafx-controls', version: '11.0.2', classifier: 'win')
