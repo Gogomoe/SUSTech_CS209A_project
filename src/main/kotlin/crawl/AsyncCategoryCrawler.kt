@@ -4,8 +4,8 @@ import model.Category
 import model.CommentSummary
 import model.Product
 import org.jsoup.Jsoup
-import java.util.concurrent.CompletableFuture
 import java.net.URLEncoder
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.function.Supplier
@@ -28,17 +28,27 @@ class AsyncCategoryCrawler(
             val doc = Jsoup.connect(url).get()
             val elements = doc.select(".gl-item")
             elements.forEach {
-                val id = it.attr("data-pid").toLong()
+
+                val id = if (it.attr("data-pid").isNotEmpty()) {
+                    it.attr("data-pid").toLong()
+                } else {
+                    it.attr("data-sku").toLong()
+                }
+
                 val url = it.select(".p-img img").attr("source-data-lazy-img").toString()
                 val name = it.select(".p-name em").text()
                 putProduct(id, url, name)
+
+                println("$id $name")
             }
             val products = category.products.map {
-                queryerBuilder(it).upate().get()
+                queryerBuilder(it).update().get()
             }
             category = Category(category.name, products)
             category
-        }, cached)
+        }, cached).whenComplete { t, c ->
+            c?.printStackTrace()
+        }
     }
 
     private fun putProduct(id: Long, url: String, name: String) {

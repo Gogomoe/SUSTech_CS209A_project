@@ -15,7 +15,8 @@ class JsonProductStore : ProductStore {
     }
 
     override fun load(productId: Long): Product {
-        val json = Files.readString(makePath(productId))
+        val path = makePath(productId)
+        val json = if (path.toFile().exists()) Files.readString(path) else "{}"
         return gson.fromJson(json, Product::class.java)
     }
 

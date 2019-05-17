@@ -4,14 +4,15 @@ import model.Comment
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
-import java.util.concurrent.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
+import java.util.concurrent.ThreadPoolExecutor
 import java.util.function.Supplier
 
 
 class AsyncCommentCrawler(val crawler: CommentCrawler) {
 
-    private val size = 10
+    private val size = 5
 
     private val pool = Executors.newFixedThreadPool(size) as ThreadPoolExecutor
     private val cached = Executors.newCachedThreadPool() as ThreadPoolExecutor
@@ -19,7 +20,16 @@ class AsyncCommentCrawler(val crawler: CommentCrawler) {
     private fun crawl(productId: Long, page: Int): CompletableFuture<List<Comment>> {
         return CompletableFuture.supplyAsync(Supplier {
             runAtLeast(1000) {
-                crawler.crawl(productId, page)
+
+                try {
+                    val res = crawler.crawl(productId, page) ?: emptyList<Comment>()
+                    println("get $productId $page $res")
+                    res
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    emptyList<Comment>()
+                }
+
             }
         }, pool)
     }
@@ -45,10 +55,10 @@ class AsyncCommentCrawler(val crawler: CommentCrawler) {
             var shouldRun = true
 
             while (shouldRun) {
-                if (page > 100) {
+                if (page >= 60) {
                     shouldRun = false
                 }
-                if (tasks.size <= 5) {
+                if (tasks.size < size) {
                     val task = crawl(productId, page++)
                     tasks.add(task)
                     task.thenAccept {

@@ -16,34 +16,44 @@ class AsyncCommentQueryer(
 
     private val crawler = AsyncCommentCrawler(crawler)
 
-    fun upate(): CompletableFuture<Product> {
+    private var allComments = product.comments.queries.flatMap { it.comments }.toList()
+
+    fun update(): CompletableFuture<Product> {
         return query().thenApply {
+            if (it.comments.isEmpty()) {
+                return@thenApply product
+            }
+
             val queries = ArrayList(product.comments.queries)
             queries.add(it)
             val summary = summary(queries)
             product = product.setSummary(summary)
+            allComments = product.comments.queries.flatMap { it.comments }.toList()
             product
         }
     }
 
     fun query(): CompletableFuture<CommentQuery> {
-        return if (product.comments.queries.isEmpty()) {
+        return if (product.comments.queries.isEmpty() || allComments.size < 200) {
 
             crawler.crawlAll(product.id).thenApply {
-                val tags = analyzer.analyse(it)
+                val list = it.filter { it !in allComments }
+                val tags = analyzer.analyse(list)
                 val now = LocalDateTime.now()
-                CommentQuery(it, tags, now)
+
+                CommentQuery(list, tags, now)
             }
 
         } else {
-            
+
             val queries = product.comments.queries
             val time = queries[queries.size - 1].time
 
             crawler.crawlFrom(product.id, time).thenApply {
-                val tags = analyzer.analyse(it)
+                val list = it.filter { it !in allComments }
+                val tags = analyzer.analyse(list)
                 val now = LocalDateTime.now()
-                CommentQuery(it, tags, now)
+                CommentQuery(list, tags, now)
             }
         }
     }
