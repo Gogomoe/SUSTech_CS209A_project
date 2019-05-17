@@ -4,16 +4,11 @@ import crawl.AsyncCategoryCrawler;
 import crawl.AsyncCommentQueryer;
 import crawl.BasicCommentCrawler;
 import kotlin.jvm.functions.Function1;
-import model.Category;
-import model.CommentSummary;
-import model.Product;
-import model.TagWeight;
-import nlp.FakeTagAnalyzer;
+import model.*;
+import nlp.SimpleAnalyazer;
 import nlp.TagAnalyzer;
 import scorer.CommentSummer;
-import store.CategoryStore;
-import store.ProductStore;
-import store.TagWeightStore;
+import store.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +22,28 @@ public class Controller {
     private ProductStore productStore;
     private TagWeightStore tagWeightStore;
 
-    private TagAnalyzer tagAnalyzer = new FakeTagAnalyzer();
+    private TagAnalyzer tagAnalyzer = new SimpleAnalyazer();
     private CommentSummer summer;
 
     private List<Category> categories = new ArrayList<>();
     private Map<Long, Product> products = new HashMap<>();
     private Map<String, TagWeight> tagWeights = new HashMap<>();
+
+    public static void reAnalyseTags() {
+        Controller c = new Controller(new JsonCategoryStore(), new JsonProductStore(), new JsonTagWeightStore());
+        List<Product> newlist = new ArrayList<>();
+        for (Product product : c.products.values()) {
+            for (CommentQuery query : product.getComments().getQueries()) {
+                query.getTags().clear();
+                query.getTags().addAll(c.tagAnalyzer.analyse(query.getComments()));
+            }
+            Product newp = product.setSummary(c.summer.evaluate(product.getComments().getQueries()));
+            newlist.add(newp);
+            c.productStore.save(newp);
+        }
+        List<TagWeight> tagWeights = c.getTagWeights(newlist);
+        c.tagWeightStore.save(tagWeights);
+    }
 
     public Controller(CategoryStore categoryStore, ProductStore productStore, TagWeightStore tagWeightStore) {
         this.categoryStore = categoryStore;
