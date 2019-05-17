@@ -21,6 +21,7 @@ public interface TagAnalyzer {
                     tags.put(key, new Tag(key, old.getCount() + it.getCount(), it.getScore()));
                 });
         return new ArrayList<>(tags.values());
+        //
 
     }
 

@@ -83,7 +83,10 @@ public class CommentsMark {
 
             //Comment cm = null;
             //  String comment = cm.getContent();
-            String comment = "超级喜欢，真的太香了，要是纠结买x还是xr的朋友，别犹豫了，xr性能完爆x，待机完爆x，xr就是x的升级版，性价比太高了，骚黄太好看了，炒鸡喜欢，屏幕方面别和xsmax比较就行，能接受屏幕的买它绝对不后悔，屏幕虽然分辨率不高但是很护眼，而且是最省电的，电池非常大，待机时间爆表，目前苹果手机里待机时间最长的一款，支持双卡双待，非常满意nice！";
+            String comment = "超级喜欢，真的太香了，要是纠结买x还是xr的朋友，别犹豫了，xr性能" +
+            "完爆x，待机完爆x，xr就是x的升级版，性价比太高了，骚黄太好看了，炒鸡喜欢，屏幕" +
+                    "方面别和xsmax比较就行，能接受屏幕的买它绝对不后悔，屏幕虽然分辨率不高但是很护眼，" +
+                    "而且是最省电的，电池非常大，待机时间爆表，目前苹果手机里待机时间最长的一款，支持双卡双待，非常满意nice！";
             List<Word> words = NLPTokenizer
                     .segment(comment)
                     .stream()
@@ -106,7 +109,8 @@ public class CommentsMark {
                         score = score + 4;
                     } else if (words.get(i - 1).getType().equals("most")) {
                         score = score + 5;
-                    } else if (words.get(i - 1).getType().equals("fouding") || words.get(i - 1).getType().equals("negative") || words.get(i + 1).getType().equals("negative")) {
+                    } else if (words.get(i - 1).getType().equals("fouding") ||
+                            words.get(i - 1).getType().equals("negative") || words.get(i + 1).getType().equals("negative")) {
                         score--;
                     }
 
@@ -138,7 +142,7 @@ public class CommentsMark {
 
     public static Word WordDistinguish(Word word) {
         try {
-            InputStreamReader reader1 = new InputStreamReader(new FileInputStream("C:\\Users\\瓜皮\\CS209A_project\\dict\\insufficient.txt"));
+            InputStreamReader reader1 = new InputStreamReader(new FileInputStream("dict\\insufficient.txt"));
             BufferedReader br = new BufferedReader(reader1);
             String line = "";
 
@@ -193,7 +197,7 @@ public class CommentsMark {
                     word.setType("negative");
                 }
             }
-            InputStreamReader reader7 = new InputStreamReader(new FileInputStream("positive.txt"));
+            InputStreamReader reader7 = new InputStreamReader(new FileInputStream("dict\\positive.txt"));
             BufferedReader br7 = new BufferedReader(reader7);
             String line7 = "";
             while (line7 != null) {
