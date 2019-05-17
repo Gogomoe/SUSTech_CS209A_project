@@ -43,4 +43,11 @@ public class Tag {
     public int hashCode() {
         return content != null ? content.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "content='" + content + '\'' +
+                '}';
+    }
 }
