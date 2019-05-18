@@ -3,9 +3,13 @@ package nlp
 import com.hankcs.hanlp.tokenizer.NLPTokenizer
 import model.Comment
 import model.Tag
-import java.time.LocalDateTime
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.stream.Collectors
 
-class SimpleAnalyazer : TagAnalyzer {
+class SimpleAnalyzer : TagAnalyzer {
+
+    private val positive = Files.lines(Path.of("dict/positive.txt")).collect(Collectors.toSet())
 
     override fun analyse(comment: Comment): MutableList<Tag> {
         val list = NLPTokenizer.segment(comment.getContent())
@@ -16,7 +20,9 @@ class SimpleAnalyazer : TagAnalyzer {
             val now = list[i]
 
             if (last.nature.toString().startsWith("v") && now.nature.toString().startsWith("a")) {
-                result.add(Tag(last.word + now.word, 1, 1.0))
+                if (now.word in positive && last.word !in positive) {
+                    result.add(Tag(last.word + now.word, 1, 1.0))
+                }
             }
         }
         return result

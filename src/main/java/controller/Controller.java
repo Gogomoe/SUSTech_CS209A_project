@@ -5,8 +5,9 @@ import crawl.AsyncCommentQueryer;
 import crawl.BasicCommentCrawler;
 import kotlin.jvm.functions.Function1;
 import model.*;
-import nlp.SimpleAnalyazer;
+import nlp.SimpleAnalyzer;
 import nlp.TagAnalyzer;
+import org.jetbrains.annotations.NotNull;
 import scorer.CommentSummer;
 import store.*;
 
@@ -22,12 +23,14 @@ public class Controller {
     private ProductStore productStore;
     private TagWeightStore tagWeightStore;
 
-    private TagAnalyzer tagAnalyzer = new SimpleAnalyazer();
+    private TagAnalyzer tagAnalyzer = new SimpleAnalyzer();
     private CommentSummer summer;
 
     private List<Category> categories = new ArrayList<>();
     private Map<Long, Product> products = new HashMap<>();
     private Map<String, TagWeight> tagWeights = new HashMap<>();
+
+    private Map<String, List<TagWeight>> tagWeightsOfCategory = new HashMap<>();
 
     public static void reAnalyseTags() {
         Controller c = new Controller(new JsonCategoryStore(), new JsonProductStore(), new JsonTagWeightStore());
@@ -41,7 +44,7 @@ public class Controller {
             newlist.add(newp);
             c.productStore.save(newp);
         }
-        List<TagWeight> tagWeights = c.getTagWeights(newlist);
+        List<TagWeight> tagWeights = c.updateTagWeights(newlist);
         c.tagWeightStore.save(tagWeights);
     }
 
@@ -62,6 +65,8 @@ public class Controller {
         Map<String, Integer> map = new HashMap<>();
         tagWeights.forEach((key, value) -> map.put(key, value.getWeight()));
         summer = new CommentSummer(map);
+
+        categories.forEach(it -> updateTagWeightsOfCategory(it.getName()));
     }
 
 
@@ -74,22 +79,34 @@ public class Controller {
     }
 
 
-    public List<TagWeight> getTagWeights(List<Product> products) {
-        return products.stream()
+    public void updateTagWeightsOfCategory(String category) {
+        List<TagWeight> list = updateTagWeights(getCategory(category).getProducts());
+        tagWeightsOfCategory.put(category, list);
+    }
+
+    @NotNull
+    private List<TagWeight> updateTagWeights(List<Product> products) {
+        Map<TagWeight, Integer> map = new HashMap<>();
+        products.stream()
                 .map(Product::getComments)
                 .flatMap(it -> it.getQueries().stream())
                 .flatMap(it -> it.getTags().stream())
-                .distinct()
                 .map(it -> {
                     tagWeights.putIfAbsent(it.getContent(), new TagWeight(it.getContent(), 1));
                     return tagWeights.get(it.getContent());
-                })
+                }).forEach(it -> {
+                    map.putIfAbsent(it, 0);
+                    map.put(it, map.get(it) + 1);
+                }
+        );
+        return map.entrySet().stream()
+                .sorted((a, b) -> -a.getValue() + b.getValue())
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-
     }
 
     public List<TagWeight> getTagWeightsByCategory(String name) {
-        return getTagWeights(getCategory(name).getProducts());
+        return tagWeightsOfCategory.get(name);
     }
 
     public void updateTag(String name, int weight) {
@@ -127,6 +144,7 @@ public class Controller {
             categories.remove(c);
             categories.add(c);
             categoryStore.saveAll(categories);
+            updateTagWeightsOfCategory(categoryName);
             isUpdating = false;
         });
     }

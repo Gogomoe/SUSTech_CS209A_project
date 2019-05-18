@@ -89,13 +89,14 @@
             loadProducts: function () {
                 return new Promise((resolve, reject) => {
                     let array = this.getProducts();
+                    let max = 0;
                     array.sort((a, b) => -(a.score - b.score));
                     array.forEach(it => {
                         it.fadeIn = false;
                         it.fadeOut = false;
-
-                        this.maxScore = Math.max(this.maxScore, it.score);
+                        max = Math.max(max, it.score);
                     });
+                    this.maxScore = max;
 
                     for (let i = 0; i < array.length; i++) {
                         setTimeout(() => {
@@ -143,10 +144,12 @@
             },
             modifyWeight: function (name, weight) {
                 Controller.updateTag(name, parseInt(weight));
+                let max = 0;
                 this.products.forEach(it => {
                     it.score = Controller.calculateScore(it.id);
-                    this.maxScore = Math.max(this.maxScore, it.score);
+                    max = Math.max(max, it.score);
                 });
+                this.maxScore = max;
                 this.products.sort((a, b) => -(a.score - b.score));
             },
             updateProducts: function () {
