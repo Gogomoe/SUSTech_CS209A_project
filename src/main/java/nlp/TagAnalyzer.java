@@ -3,16 +3,24 @@ package nlp;
 import model.Comment;
 import model.Tag;
 
+import java.io.IOException;
 import java.util.*;
 
 public interface TagAnalyzer {
 
-    List<Tag> analyse(Comment comment);
+    List<Tag> analyse(Comment comment) throws IOException;
 
     default List<Tag> analyse(List<Comment> comments) {
         Map<String, Tag> tags = new HashMap<>();
         comments.stream()
-                .map(this::analyse)
+                .map(comment -> {
+                    try {
+                        return analyse(comment);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                })
                 .flatMap(Collection::stream)
                 .forEach(it -> {
                     String key = it.getContent();
