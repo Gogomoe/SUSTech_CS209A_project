@@ -23,6 +23,21 @@
                  'v-fade-in':sidebarFadeIn,
                  'v-fade-out':sidebarFadeOut
                  }">
+                <div class="m-filter-area">
+                    <div class="u-filter"
+                         v-bind:class="{'filter-select':filterDateSelect === 3}"
+                         v-on:click="filterDate(3)">
+                        最近三天
+                    </div>
+                    <div class="u-filter"
+                         v-bind:class="{'filter-select':filterDateSelect === 7}"
+                         v-on:click="filterDate(7)">最近一周
+                    </div>
+                    <div class="u-filter"
+                         v-bind:class="{'filter-select':filterDateSelect === 30}"
+                         v-on:click="filterDate(30)">最近一月
+                    </div>
+                </div>
                 <div class="m-tag-area">
 
                     <tag
@@ -67,7 +82,8 @@
                 isUpdating: false,
                 sidebarFadeIn: false,
                 sidebarFadeOut: false,
-                maxScore: 0
+                maxScore: 0,
+                filterDateSelect: -1
             }
         },
         props: ['dataObj'],
@@ -147,6 +163,20 @@
                 let max = 0;
                 this.products.forEach(it => {
                     it.score = Controller.calculateScore(it.id);
+                    max = Math.max(max, it.score);
+                });
+                this.maxScore = max;
+                this.products.sort((a, b) => -(a.score - b.score));
+            },
+            filterDate: function (limit) {
+                if (this.filterDateSelect === limit) {
+                    this.filterDateSelect = -1;
+                } else {
+                    this.filterDateSelect = limit;
+                }
+                Controller.setFilterDate(this.filterDateSelect);
+                this.products.forEach(it => {
+                    it.score = Controller.calculateFilterScore(it.id);
                     max = Math.max(max, it.score);
                 });
                 this.maxScore = max;

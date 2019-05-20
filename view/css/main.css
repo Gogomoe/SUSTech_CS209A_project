@@ -103,7 +103,8 @@
 .m-tag-area {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap; }
+  flex-wrap: wrap;
+  padding-top: 1em; }
   .m-tag-area .u-tag {
     display: flex;
     margin: 0.2em;
@@ -122,6 +123,26 @@
       color: white;
       outline: none;
       border: none; }
+
+.m-filter-area {
+  display: flex;
+  flex-direction: column;
+  border-bottom: solid 1px #d1d5da;
+  padding: 1em 1em; }
+  .m-filter-area .u-filter {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.2em;
+    padding: .5em;
+    height: 2.4em;
+    background: #2387e4;
+    color: white;
+    transition: background-color .3s ease-in-out; }
+    .m-filter-area .u-filter:hover {
+      background: #176dbd; }
+    .m-filter-area .u-filter.filter-select {
+      background: #27aa45; }
 
 .m-product-area {
   display: flex;

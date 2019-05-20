@@ -11,10 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import scorer.CommentSummer;
 import store.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -127,6 +126,29 @@ public class Controller {
         productStore.save(newProduct);
         return summary.getScore();
     }
+
+    private int filterDate = -1;
+
+    public void setFilterDate(int limit) {
+        filterDate = limit;
+    }
+
+    public double calculateFilterScore(long productId) {
+        Product p = products.get(productId);
+        if (filterDate == -1) {
+            return p.getComments().getScore();
+        } else {
+            LocalDateTime time = LocalDateTime.now().minusDays(filterDate);
+            List<Comment> comments = p.getComments().getQueries().stream()
+                    .flatMap(it -> it.getComments().stream())
+                    .filter(it -> it.getTime().isAfter(time))
+                    .collect(Collectors.toList());
+            List<Tag> tag = tagAnalyzer.analyse(comments);
+            CommentSummary summary = summer.evaluate(Collections.singletonList(new CommentQuery(comments, tag, time)));
+            return summary.getScore();
+        }
+    }
+
 
     private boolean isUpdating = false;
 

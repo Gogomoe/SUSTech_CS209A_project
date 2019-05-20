@@ -33,6 +33,8 @@
   flex-direction: row;
   flex-wrap: wrap;
 
+  padding-top: 1em;
+
   .u-tag {
     display: flex;
     margin: 0.2em;
@@ -59,6 +61,33 @@
 
     }
   }
+}
+
+.m-filter-area {
+  @include flex-vertical;
+
+  .u-filter {
+    @include center-vertical;
+    box-sizing: border-box;
+    margin: 0.2em;
+    padding: .5em;
+    height: 2.4em;
+    background: $primeColor;
+    color: white;
+
+    transition: background-color .3s ease-in-out;
+
+    &:hover {
+      background: darken($primeColor, 10%);
+    }
+
+    &.filter-select {
+      background: darken(#34d058, 10%);
+    }
+  }
+
+  border-bottom: solid 1px $greyBorderColor;
+  padding: 1em 1em;
 }
 
 .m-product-area {
