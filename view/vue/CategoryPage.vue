@@ -2,7 +2,16 @@
     <main id="m-category-page">
 
         <div class="m-history m-category-history"
-             v-bind:class="{'show':isShowHistory}"></div>
+             v-bind:class="{'show':isShowHistory}">
+
+            <div class="u-category-history-chart-box">
+                <category-history-chart class="u-category-history-chart"
+                                        v-if="isShowHistory"
+                                        v-bind:category="dataObj.category"></category-history-chart>
+            </div>
+
+        </div>
+
         <div class="m-header">
             <div class="u-icon u-rollback" v-on:click="backToMainPage()">
                 <antd-icon type="rollback-o" class="icon"/>
@@ -66,10 +75,11 @@
 <script>
     import ProductBox from './ProductBox.vue';
     import Tag from './Tag.vue';
+    import CategoryHistoryChart from './CategoryHistoryChart.vue';
 
     export default {
         name: "CategoryPage",
-        components: {ProductBox, Tag},
+        components: {ProductBox, Tag, CategoryHistoryChart},
         mounted() {
             this.loadProducts();
             this.loadTags();

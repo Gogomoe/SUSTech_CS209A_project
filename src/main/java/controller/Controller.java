@@ -3,6 +3,7 @@ package controller;
 import crawl.AsyncCategoryCrawler;
 import crawl.AsyncCommentQueryer;
 import crawl.BasicCommentCrawler;
+import kotlin.Pair;
 import kotlin.jvm.functions.Function1;
 import model.*;
 import nlp.SimpleAnalyzer;
@@ -12,8 +13,8 @@ import scorer.CommentSummer;
 import store.*;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -177,6 +178,18 @@ public class Controller {
 
     public boolean isUpdating() {
         return isUpdating;
+    }
+
+    public List<Pair<String, Integer>> getCategoryHistory(String category) {
+        return getCategory(category).getProducts().stream()
+                .flatMap(it -> it.getComments().getQueries().stream())
+                .flatMap(it -> it.getComments().stream())
+                .map(it -> it.getTime().toLocalDate().toString())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet().stream()
+                .map(it -> new Pair<>(it.getKey(), it.getValue().intValue()))
+                .sorted(Comparator.comparing(Pair::getFirst))
+                .collect(Collectors.toList());
     }
 
 }
