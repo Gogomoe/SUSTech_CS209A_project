@@ -10,3 +10,11 @@ Java9及以后版本需要添加以下虚拟机参数
 --add-exports javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED 
 --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
 ```
+
+### HanLP 配置
+
+本项目使用 HanLP 进行词法分析，[下载data.zip](http://nlp.hankcs.com/download.php?file=data)
+，并解压到项目根目录的 data 文件夹下。
+
+可以参考 [Hanlp官网](https://github.com/hankcs/HanLP#%E6%96%B9%E5%BC%8F%E4%BA%8C%E4%B8%8B%E8%BD%BDjardatahanlpproperties)
+进行配置。
