@@ -175,6 +175,7 @@
                     this.filterDateSelect = limit;
                 }
                 Controller.setFilterDate(this.filterDateSelect);
+                let max = 0;
                 this.products.forEach(it => {
                     it.score = Controller.calculateFilterScore(it.id);
                     max = Math.max(max, it.score);

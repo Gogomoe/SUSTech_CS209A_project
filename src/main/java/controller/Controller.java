@@ -139,13 +139,17 @@ public class Controller {
             return p.getComments().getScore();
         } else {
             LocalDateTime time = LocalDateTime.now().minusDays(filterDate);
-            List<Comment> comments = p.getComments().getQueries().stream()
+            int filteredCommentCount = (int) p.getComments().getQueries().stream()
                     .flatMap(it -> it.getComments().stream())
-                    .filter(it -> it.getTime().isAfter(time))
-                    .collect(Collectors.toList());
-            List<Tag> tag = tagAnalyzer.analyse(comments);
-            CommentSummary summary = summer.evaluate(Collections.singletonList(new CommentQuery(comments, tag, time)));
-            return summary.getScore();
+                    .filter(it -> it.getTime().isAfter(time)).count();
+            int commentCount = p.getComments().getQueries().stream()
+                    .mapToInt(it -> it.getComments().size()).sum();
+
+            if (commentCount == 0) {
+                return 0;
+            }
+
+            return (int) (filteredCommentCount / commentCount * p.getComments().getScore());
         }
     }
 
