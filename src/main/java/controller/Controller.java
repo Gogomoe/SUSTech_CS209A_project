@@ -134,7 +134,7 @@ public class Controller {
         filterDate = limit;
     }
 
-    public double calculateFilterScore(long productId) {
+    public double calculateFilterDateScore(long productId) {
         Product p = products.get(productId);
         if (filterDate == -1) {
             return p.getComments().getScore();
@@ -150,7 +150,7 @@ public class Controller {
             return 0;
         }
 
-        return (int) (filteredCommentCount / commentCount * p.getComments().getScore());
+        return (int) (p.getComments().getScore() * filteredCommentCount / commentCount);
     }
 
     private String filterText = "";
@@ -168,6 +168,35 @@ public class Controller {
         return (int) p.getComments().getQueries().stream()
                 .flatMap(it -> it.getComments().stream())
                 .filter(it -> it.getContent().contains(filterText)).count();
+    }
+
+    private int filterLengthStart = -1;
+    private int filterLengthEnd = -1;
+
+    public void setFilterLength(int start, int end) {
+        filterLengthStart = start;
+        filterLengthEnd = end;
+    }
+
+    public double calculateFilterLengthScore(long productId) {
+        Product p = products.get(productId);
+        if (filterLengthStart == -1 && filterLengthEnd == -1) {
+            return p.getComments().getScore();
+        }
+        int filteredCommentCount = (int) p.getComments().getQueries().stream()
+                .flatMap(it -> it.getComments().stream())
+                .filter(it -> {
+                    int length = it.getContent().length();
+                    return length >= filterLengthStart && length <= filterLengthEnd;
+                }).count();
+        int commentCount = p.getComments().getQueries().stream()
+                .mapToInt(it -> it.getComments().size()).sum();
+
+        if (commentCount == 0) {
+            return 0;
+        }
+
+        return (int) (p.getComments().getScore() * filteredCommentCount / commentCount);
     }
 
     private boolean isUpdating = false;

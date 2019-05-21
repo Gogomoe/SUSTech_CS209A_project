@@ -39,17 +39,32 @@
 
                 <div class="m-filter-area">
                     <div class="u-filter"
+                         v-bind:class="{'filter-select':filterLengthStart === 0 && filterLengthEnd === 30}"
+                         v-on:click="filterLength(0, 30)">
+                        短评论
+                    </div>
+                    <div class="u-filter"
+                         v-bind:class="{'filter-select':filterLengthStart === 30 && filterLengthEnd === 10000}"
+                         v-on:click="filterLength(30, 10000)">
+                        长评论
+                    </div>
+                </div>
+
+                <div class="m-filter-area">
+                    <div class="u-filter"
                          v-bind:class="{'filter-select':filterDateSelect === 3}"
                          v-on:click="filterDate(3)">
                         最近三天
                     </div>
                     <div class="u-filter"
                          v-bind:class="{'filter-select':filterDateSelect === 7}"
-                         v-on:click="filterDate(7)">最近一周
+                         v-on:click="filterDate(7)">
+                        最近一周
                     </div>
                     <div class="u-filter"
                          v-bind:class="{'filter-select':filterDateSelect === 30}"
-                         v-on:click="filterDate(30)">最近一月
+                         v-on:click="filterDate(30)">
+                        最近一月
                     </div>
                 </div>
                 <div class="m-tag-area">
@@ -99,6 +114,8 @@
                 sidebarFadeOut: false,
                 maxScore: 0,
                 filterDateSelect: -1,
+                filterLengthStart: -1,
+                filterLengthEnd: -1,
                 filterTextField: ""
             }
         },
@@ -114,14 +131,7 @@
                     this.filterTextField = newValue;
 
                     setTimeout(() => {
-                        Controller.setFilterText(this.filterTextField);
-                        let max = 0;
-                        this.products.forEach(it => {
-                            it.score = Controller.calculateFilterTextScore(it.id);
-                            max = Math.max(max, it.score);
-                        });
-                        this.maxScore = max;
-                        this.products.sort((a, b) => -(a.score - b.score));
+                        this.filterKeyword()
                     }, 0);
                 }
             }
@@ -208,6 +218,16 @@
                 this.maxScore = max;
                 this.products.sort((a, b) => -(a.score - b.score));
             },
+            filterKeyword: function () {
+                Controller.setFilterText(this.filterTextField);
+                let max = 0;
+                this.products.forEach(it => {
+                    it.score = Controller.calculateFilterTextScore(it.id);
+                    max = Math.max(max, it.score);
+                });
+                this.maxScore = max;
+                this.products.sort((a, b) => -(a.score - b.score));
+            },
             filterDate: function (limit) {
                 if (this.filterDateSelect === limit) {
                     this.filterDateSelect = -1;
@@ -217,7 +237,24 @@
                 Controller.setFilterDate(this.filterDateSelect);
                 let max = 0;
                 this.products.forEach(it => {
-                    it.score = Controller.calculateFilterScore(it.id);
+                    it.score = Controller.calculateFilterDateScore(it.id);
+                    max = Math.max(max, it.score);
+                });
+                this.maxScore = max;
+                this.products.sort((a, b) => -(a.score - b.score));
+            },
+            filterLength: function (start, end) {
+                if (this.filterLengthStart === start && this.filterLengthEnd === end) {
+                    this.filterLengthStart = -1;
+                    this.filterLengthEnd = -1;
+                } else {
+                    this.filterLengthStart = start;
+                    this.filterLengthEnd = end;
+                }
+                Controller.setFilterLength(this.filterLengthStart, this.filterLengthEnd);
+                let max = 0;
+                this.products.forEach(it => {
+                    it.score = Controller.calculateFilterLengthScore(it.id);
                     max = Math.max(max, it.score);
                 });
                 this.maxScore = max;
