@@ -98,6 +98,17 @@
     }
   }
 
+  .u-text-filter {
+    box-sizing: border-box;
+    margin: 0.2em;
+    padding: .5em;
+    height: 2.4em;
+  }
+
+  .u-text-filter:focus {
+    outline-color: $primeColor;
+  }
+
   border-bottom: solid 1px $greyBorderColor;
   padding: 1em 1em;
 }

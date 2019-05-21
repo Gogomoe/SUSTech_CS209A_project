@@ -32,6 +32,11 @@
                  'v-fade-in':sidebarFadeIn,
                  'v-fade-out':sidebarFadeOut
                  }">
+
+                <div class="m-filter-area">
+                    <input class="u-text-filter" type="text" placeholder="关键字过滤" v-model="filterText">
+                </div>
+
                 <div class="m-filter-area">
                     <div class="u-filter"
                          v-bind:class="{'filter-select':filterDateSelect === 3}"
@@ -93,7 +98,32 @@
                 sidebarFadeIn: false,
                 sidebarFadeOut: false,
                 maxScore: 0,
-                filterDateSelect: -1
+                filterDateSelect: -1,
+                filterTextField: ""
+            }
+        },
+        computed: {
+            filterText: {
+                get: function () {
+                    return this.filterTextField;
+                },
+                set: function (newValue) {
+                    if (newValue.match(/\w+/g)) {
+                        return;
+                    }
+                    this.filterTextField = newValue;
+
+                    setTimeout(() => {
+                        Controller.setFilterText(this.filterTextField);
+                        let max = 0;
+                        this.products.forEach(it => {
+                            it.score = Controller.calculateFilterTextScore(it.id);
+                            max = Math.max(max, it.score);
+                        });
+                        this.maxScore = max;
+                        this.products.sort((a, b) => -(a.score - b.score));
+                    }, 0);
+                }
             }
         },
         props: ['dataObj'],

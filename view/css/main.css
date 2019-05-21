@@ -153,6 +153,13 @@
       background: #176dbd; }
     .m-filter-area .u-filter.filter-select {
       background: #27aa45; }
+  .m-filter-area .u-text-filter {
+    box-sizing: border-box;
+    margin: 0.2em;
+    padding: .5em;
+    height: 2.4em; }
+  .m-filter-area .u-text-filter:focus {
+    outline-color: #2387e4; }
 
 .m-product-area {
   display: flex;

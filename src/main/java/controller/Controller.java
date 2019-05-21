@@ -138,22 +138,37 @@ public class Controller {
         Product p = products.get(productId);
         if (filterDate == -1) {
             return p.getComments().getScore();
-        } else {
-            LocalDateTime time = LocalDateTime.now().minusDays(filterDate);
-            int filteredCommentCount = (int) p.getComments().getQueries().stream()
-                    .flatMap(it -> it.getComments().stream())
-                    .filter(it -> it.getTime().isAfter(time)).count();
-            int commentCount = p.getComments().getQueries().stream()
-                    .mapToInt(it -> it.getComments().size()).sum();
-
-            if (commentCount == 0) {
-                return 0;
-            }
-
-            return (int) (filteredCommentCount / commentCount * p.getComments().getScore());
         }
+        LocalDateTime time = LocalDateTime.now().minusDays(filterDate);
+        int filteredCommentCount = (int) p.getComments().getQueries().stream()
+                .flatMap(it -> it.getComments().stream())
+                .filter(it -> it.getTime().isAfter(time)).count();
+        int commentCount = p.getComments().getQueries().stream()
+                .mapToInt(it -> it.getComments().size()).sum();
+
+        if (commentCount == 0) {
+            return 0;
+        }
+
+        return (int) (filteredCommentCount / commentCount * p.getComments().getScore());
     }
 
+    private String filterText = "";
+
+    public void setFilterText(String limit) {
+        filterText = limit;
+    }
+
+    public double calculateFilterTextScore(long productId) {
+        Product p = products.get(productId);
+        if (filterText.isBlank()) {
+            return p.getComments().getScore();
+        }
+
+        return (int) p.getComments().getQueries().stream()
+                .flatMap(it -> it.getComments().stream())
+                .filter(it -> it.getContent().contains(filterText)).count();
+    }
 
     private boolean isUpdating = false;
 
