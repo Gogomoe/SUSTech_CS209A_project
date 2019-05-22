@@ -30,13 +30,12 @@ public class BasicCommentCrawler implements CommentCrawler {
 
     private final int[] proxyPorts = {};
 
-    private HttpURLConnection openConnection(URL url) throws IOException {
+    private Proxy getProxy() {
         if (proxyPorts.length != 0) {
             int port = proxyPorts[generator.nextInt(proxyPorts.length)];
-            Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", port));
-            return (HttpURLConnection) url.openConnection(proxy);
+            return new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", port));
         }
-        return (HttpURLConnection) url.openConnection();
+        return null;
     }
 
     private String randomUserAgent() {
@@ -47,13 +46,24 @@ public class BasicCommentCrawler implements CommentCrawler {
     public List<Comment> crawl(long productId, int page) throws IOException {
 
         URL url = new URL(String.format(urlTemplate, productId, page));
-        HttpURLConnection connection = openConnection(url);
+        HttpURLConnection connection;
+        Proxy proxy = getProxy();
+        if (proxy != null) {
+            connection = (HttpURLConnection) url.openConnection(proxy);
+        } else {
+            connection = (HttpURLConnection) url.openConnection();
+        }
         connection.setDoInput(true);
         connection.setRequestMethod("GET");
         connection.setRequestProperty("User-Agent", randomUserAgent());
         connection.setRequestProperty("Referer", "https://item.jd.com/");
 
-        String str = new String(connection.getInputStream().readAllBytes(), Charset.forName("GBK"));
+        String str;
+        try {
+            str = new String(connection.getInputStream().readAllBytes(), Charset.forName("GBK"));
+        } catch (IOException e) {
+            throw new RuntimeException("port:" + ((InetSocketAddress) proxy.address()).getPort(), e);
+        }
 
         if (str.length() == 0) {
             return null;
