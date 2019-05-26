@@ -102,6 +102,7 @@ public class Controller {
         return map.entrySet().stream()
                 .sorted((a, b) -> -a.getValue() + b.getValue())
                 .map(Map.Entry::getKey)
+                .limit((int) (products.size() * 2.8))
                 .collect(Collectors.toList());
     }
 

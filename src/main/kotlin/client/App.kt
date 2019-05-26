@@ -52,8 +52,12 @@ class App(val primaryStage: Stage) {
         primaryStage.scene = scene
         primaryStage.setOnCloseRequest {
             Platform.exit()
-            Thread { browser.dispose() }.start()
             Server.stop()
+            Thread { browser.dispose() }.start()
+            Thread {
+                Thread.sleep(100)
+                System.exit(0)
+            }.start()
         }
         primaryStage.show()
 
