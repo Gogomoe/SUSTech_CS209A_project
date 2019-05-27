@@ -1,8 +1,6 @@
 package controller;
 
-import crawl.AsyncCategoryCrawler;
-import crawl.AsyncCommentQueryer;
-import crawl.BasicCommentCrawler;
+import crawl.*;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function1;
 import model.*;
@@ -208,7 +206,7 @@ public class Controller {
         Function1<Product, AsyncCommentQueryer> generator =
                 product -> new AsyncCommentQueryer(product, new BasicCommentCrawler(), tagAnalyzer, summer);
         AsyncCategoryCrawler crawler = new AsyncCategoryCrawler(category, generator);
-        crawler.update().thenAcceptAsync(c -> {
+        crawler.update(c -> {
             c.getProducts().forEach(p -> {
                 products.put(p.getId(), p);
                 productStore.save(p);

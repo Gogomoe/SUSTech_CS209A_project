@@ -1,5 +1,6 @@
 package crawl
 
+import kotlinx.coroutines.*
 import model.CommentQuery
 import model.CommentSummary
 import model.Product
@@ -14,47 +15,61 @@ class AsyncCommentQueryer(
         private val analyzer: TagAnalyzer,
         private val scorer: CommentScorer) {
 
+    private val scope = CoroutineScope(Dispatchers.Default)
+
     private val crawler = AsyncCommentCrawler(crawler)
 
     private var allComments = product.comments.queries.flatMap { it.comments }.toList()
 
-    fun update(): CompletableFuture<Product> {
-        return query().thenApply {
-            if (it.comments.isEmpty()) {
-                return@thenApply product
+
+    fun destroy() {
+        crawler.destroy()
+        scope.cancel()
+    }
+
+    suspend fun update(): Product {
+
+        val res = scope.async {
+            val query = query()
+
+            if (query.comments.isEmpty()) {
+                return@async product
             }
 
             val queries = ArrayList(product.comments.queries)
-            queries.add(it)
+            queries.add(query)
             val summary = summary(queries)
+
             product = product.setSummary(summary)
             allComments = product.comments.queries.flatMap { it.comments }.toList()
             product
         }
+        return res.await()
+
     }
 
-    fun query(): CompletableFuture<CommentQuery> {
-        return if (product.comments.queries.isEmpty() || allComments.size < 200) {
+    suspend fun query(): CommentQuery = coroutineScope {
+        if (product.comments.queries.isEmpty() || allComments.size < 200) {
 
-            crawler.crawlAll(product.id).thenApply {
-                val list = it.filter { it !in allComments }
-                val tags = analyzer.analyse(list)
-                val now = LocalDateTime.now()
+            val comments = crawler.crawlAll(product.id)
+            val list = comments.filter { it !in allComments }
+            val tags = analyzer.analyse(list)
+            val now = LocalDateTime.now()
 
-                CommentQuery(list, tags, now)
-            }
+            CommentQuery(list, tags, now)
 
         } else {
 
             val queries = product.comments.queries
             val time = queries[queries.size - 1].time
 
-            crawler.crawlFrom(product.id, time).thenApply {
-                val list = it.filter { it !in allComments }
-                val tags = analyzer.analyse(list)
-                val now = LocalDateTime.now()
-                CommentQuery(list, tags, now)
-            }
+            val comments = crawler.crawlFrom(product.id, time)
+
+            val list = comments.filter { it !in allComments }
+            val tags = analyzer.analyse(list)
+            val now = LocalDateTime.now()
+
+            CommentQuery(list, tags, now)
         }
     }
 

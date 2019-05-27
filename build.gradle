@@ -20,6 +20,7 @@ dependencies {
     compile group: 'com.hankcs', name: 'hanlp', version: 'portable-1.7.3'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
 
     compile 'org.slf4j:slf4j-simple:1.7.26'
     compile 'io.javalin:javalin:2.8.0'
